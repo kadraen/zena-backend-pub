@@ -1,0 +1,6 @@
+#!/bin/sh
+if [ $# -eq 0 ]; then
+  echo "Usage: ./run <command>    e.g. ./run php artisan route:list" >&2
+  exit 1
+fi
+exec docker compose run --rm app "$@"

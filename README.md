@@ -56,3 +56,23 @@ If you discover a security vulnerability within Laravel, please send an e-mail t
 ## License
 
 The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+
+## Docker
+
+Everything runs in its own containers: the app, MariaDB 10.4 and phpMyAdmin.
+
+| Command | What it does |
+|---|---|
+| `docker compose up` | Installs dependencies and starts the app on http://localhost:8000, with MariaDB and phpMyAdmin |
+| `./run php artisan migrate` | Any command in the app container (`./run composer require ...` too) |
+| http://localhost:8092 | phpMyAdmin (root, no password, as in XAMPP) |
+| `docker compose restart app` | Needed after editing `.env` (the dev server runs with `--no-reload`) |
+| `docker compose down` | Stop the containers; the database is kept |
+
+The database settings for `.env` are in `.env.example`: the local Docker database
+(`pub`, root, no password) is active, the school server (172.16.16.148) is commented out.
+In the app container `compose.yaml` sets `DB_HOST=db`, which wins over `.env`; the
+`127.0.0.1` in `.env` is for `php artisan` run on the host, which reaches MariaDB on
+127.0.0.1:3306 (`FORWARD_DB_PORT=3307` if that port is taken).
+
+Send `Accept: application/json` with API requests, e.g. `xh :8000/api/drinks Accept:application/json`.

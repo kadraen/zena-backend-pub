@@ -1,0 +1,46 @@
+services:
+  app:
+    build: .
+    ports:
+      - "${PORT:-8000}:8000"
+    # A konténerben a MariaDB a "db" nevű szolgáltatás. Ez felülírja a .env
+    # DB_HOST-ját, így a .env maradhat 127.0.0.1 a gépről futtatott parancsoknak.
+    environment:
+      DB_HOST: db
+    volumes:
+      - .:/app
+      - composer-cache:/composer-cache
+    depends_on:
+      - db
+
+  db:
+    image: mariadb:10.4.32
+    environment:
+      MARIADB_ALLOW_EMPTY_ROOT_PASSWORD: "1"
+    command:
+      - --sql-mode=
+      - --lower-case-table-names=1
+      - --lc-messages=hu_HU
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_general_ci
+    # Kiengedve a gépre is, hogy a gépről futtatott php artisan és egy adatbázis-kliens
+    # a 127.0.0.1:3306-on elérje. Ha foglalt: FORWARD_DB_PORT=3307 docker compose up
+    ports:
+      - "127.0.0.1:${FORWARD_DB_PORT:-3306}:3306"
+    volumes:
+      - db:/var/lib/mysql
+
+  phpmyadmin:
+    image: phpmyadmin:5.2.1
+    environment:
+      PMA_HOST: db
+      PMA_USER: root
+      PMA_PASSWORD: ""
+    ports:
+      - "127.0.0.1:${PMA_PORT:-8092}:80"
+    depends_on:
+      - db
+
+volumes:
+  composer-cache:
+  db:
