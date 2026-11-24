@@ -26,8 +26,8 @@ class DrinkRequest extends FormRequest
             "drink" => [ "required", "string", "min:3", "max:30" ],
             "amount" => [ "required", "numeric", "min:0" ],
             "price" => [ "required", "numeric", "min:0" ],
-            "type" => [ "required", "string", "min:3", "max:20" ],
-            "package" => [ "required", "string", "min:3", "max:20" ],
+            "type" => [ "required", "string", "min:3", "max:20", "exists:types,name" ],
+            "package" => [ "required", "string", "min:3", "max:20", "exists:packages,name" ],
         ];
     }
 }

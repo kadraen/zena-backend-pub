@@ -7,8 +7,12 @@ use App\Http\Resources\DrinkResource;
 
 class DrinkService {
 
-    public function __construct() {}
-	
+    // A Laravel adja át mindkettőt (függőségbefecskendezés).
+    public function __construct(
+        protected TypeService $typeService,
+        protected PackageService $packageService,
+    ) {}
+
     public function getDrinks() {
 
         $drinks = Drink::with( "type", "package" )->get();
@@ -29,8 +33,8 @@ class DrinkService {
         $drink->name = $validated[ "drink" ];
         $drink->amount = $validated[ "amount" ];
         $drink->price = $validated[ "price" ];
-        $drink->type_id = 1;
-        $drink->package_id = 1;
+        $drink->type_id = $this->typeService->getId( $validated[ "type" ] );
+        $drink->package_id = $this->packageService->getId( $validated[ "package" ] );
 
         $drink->save();
         
