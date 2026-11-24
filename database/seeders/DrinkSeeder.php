@@ -15,6 +15,7 @@ class DrinkSeeder extends Seeder
         
         $sql = file_get_contents( __DIR__ . "/drink.sql" );
 
-        DB::unprepared( $sql );
+        // Tranzakcióban: ha bármelyik INSERT elhasal, a többi sem marad bent.
+        DB::transaction( fn () => DB::unprepared( $sql ));
     }
 }
